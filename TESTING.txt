@@ -1,0 +1,325 @@
+this file is an instruction on how to test the mini project myShell program.
+
+The testing has been divided into different parts.
+***************************************************************************************************
+1. For the first part, let's consider the executing common Linux commands.
+   This is basically tests for step1 and step2.
+
+
+(1) Run ./myShell < testcases/basic_cmd1.txt 
+    or ./myShell < testcases/basic_cmd1.txt > testcases/output.txt 2> testcases/error.txt
+
+You will see from error.txt that it contains similar error information as printed by bash
+to stderr under same condition (despite some minor format difference). The output.txt
+contains information as printed by bash to stdout under same (despite some minor format
+difference). It is correct as the selected common Linux commands are found from paths
+indicated by PATH variable (when commands does not contain a '/'), worked normally and
+performed the same function as bash will do. Note that for line 2 of basic_cmd1.txt when
+ls command is executed with a directory that does not exist, it will print out error message
+just like bash indicating "No such file or directory" and exits with status 2 which is
+correct and as expected.
+Note that line 24 and 25 in basic_cmd.txt is a empty line ('\n') and "unknown". For the
+empty line we ignore it just as bash does and do nothing (simply print myShell prompt).
+For command "unknown", the shell will print "Command unknown not found" which is as expected
+as unknown is neither a builtin command or a binary program, so the output will be "Program
+exited with status 1" (in this design, EXIT_FAILURE is selected as exit status when command
+is not found).
+For line 26 to line 28, the commands are with at leaset one '/'. Hence what is expected is
+that instead of searching it from paths indicated by PATH, myShell will directly execute
+them as program. For line 27 and 28 which are directories, the output will be "execve: No
+such file or directory" and "Program exited with status 1", this is correct as they are not
+executable and execve will print error message to stderr. In this design, first command with
+'/' will be treated as executable program and will be sent to execve() for execution. Hence
+command like "/bin/" will be run and finally exits with EXIT_FAILURE and error message from
+execve (for this case "execve: Permission denied").
+In line 29 we test cat with no argument, what it will do is to print out input from stdin
+to the screen (stdout). As we redirected our stdin and stdout into files, the commands after
+"cat" will be simply print to output.txt and will not be executed. Because of that, the
+program works correctly.
+Also notice that the program exits when EOF is read at the end of file which is as expected.
+In this design, ./myShell will print "Program exited with status X" when it exits even if
+it calls no other program (it's a personal choice).
+
+
+(2) Run ./myShell < testcases/basic_cmd2.txt 
+    or ./myShell < testcases/basic_cmd2.txt > testcases/output.txt 2> testcases/error.txt
+
+In basic_cmd2.txt, the first four commands tested are with arbitrary number of spaces. For
+all white spaces, the ouput will be just a user prompt in a new line (myShell will do nothing);
+for the other two, myShell will treat arbitrary number of white spaces between other characters
+as one to separate arguments, the output is correct because myShell performs ls command
+normally. The output of fourth command is "command not found" prompt, which is correct as it
+works normally with arbitray number of spaces.
+Line 4 to line 8 is some other unknown commands with arbitrary characters. The output for
+these commands are "command not found" prompts which is correct as they are not executable
+binary files or valid commands. Note for line 8, a command made of characters which is 256 in
+value is used to test if myShell is able to handle EOF properly. The output is correct as
+"command not found" prompt is printed and program continue to execute without exit.
+Line 9 and line 10 are commands with long length. They are used to test if myShell can handle
+commands with big size properly. In this design, the maximum overall command size is set to
+be 512 bytes and maximum number of argument is set to 256. Line 9 contains about 280 arguments
+and line 10 has about 1150 characters (ignoring white spaces), both of them exceed the design
+limits. The ouput for these commands are "exceed limit" prompts which is correct and as what
+is expected.
+Command 11 is to run another myShell when we are using myShell. For further testing, command
+12 is to execute "echo" command and print "test_echo!", then command 13 exits the program.
+The output is correct as user prompt and "test_echo!" as well as exit status are printed
+correctly.
+Line 14 is a program named "./fault_test1", which is a broken program with memory issues. If
+run in bash, it will exit with segmentation fault. When run in myShell, it is expected exit
+with an indication of program killed by some signal. The output is correct as it correctly
+printed "Program was killed by signal 11" (signal 11 is SIGSEGV which indicates a segmentation
+fault).
+Line 15 is also an "exit", this is to test if the program can exit properly. What is expected
+is that the program exit and the commands after line 15 will not be executed. The output is
+correct as the program printed "program exit" prompt in the last line.
+
+
+(3) Run ./myShell < testcases/basic_cmd3.txt
+    or ./myShell < testcases/basic_cmd3.txt > testcases/output.txt 2> testcases/error.txt
+
+This set of tests aims to test if the '\' works correctly with white spaces. Command 1 in
+basic_cmd3.txt is simply to print out a\ b\      c\ d\ \ \ \ \ \ e after conversion. As
+specified by project specification, the expected value is a*b**c*d******e as echo will
+display each argument and separate them with a white space. The ouput is just as expected.
+Line 2 is for testing if arguments with \ and white space can be used normally by program.
+What is expected is two arguments "a b" and "c d". The output is "/bin/ls: cannot access
+'a b': No such file or directory", "/bin/ls: cannot access 'c d': No such file or directory"
+and exit prompt which is correct since arguments are handled correctly.
+The third command is expected to create a new directory named "test   dir 1". After executing
+this command, a new directory named "test   dir 1" will be successfully created under current
+directory.
+
+
+***************************************************************************************************
+2. For this part, built-in commands including "cd", "pwd", "set", "export" as well as "$"
+   evaluation of variables will be tested (step 3).
+
+
+(1) Run ./myShell < testcases/builtin_cmd1.txt > testcases/output.txt 2> testcases/error.txt
+
+This set of tests are designed to test "cd" and "pwd" commands. Line 1 to line 3 of
+builtin_cmd1.txt are commands for normal operation, which the outputs are "myShell" user
+prompts with different path name in them, in this case they are (after "cd")
+"myShell:/home/yl489/ece551/mp_miniproject $", "myShell:/home/yl489/ece551 $" and
+"myShell:/home/yl489/ece551/mp_miniproject $". They are correct as myShell provides the same
+function as bash.
+Command 4 and 5 are using "cd" with more arguments, in bash the third argument and arguments
+after it will be ignored. The output of myShell after execute these two commands are the same
+as what "cd ../" will produce (which is the same as bash), so they are correct.
+After return to the directry where myShell in, line 8 performs "cd ~" where in bash it will go
+to the "home directory" indicated by HOME variable. After doing this, the output contains path
+after performing "cd ~" which is "/home/yl489". In this design, the value of HOME variable will
+be checked and used as reference to perform directory change. To double check, line 9 prints
+out the value of HOME and from the output you can find that the value is the same as that in
+the bash and is also the same as the path after performing "cd ~".
+Line 11 and 13 are "cd" with arbitrary white spaces and empty string respectively, in bash it
+perform the same function as "cd ~" will do. As can be seen from the user prompt which contains
+current path information, both of them work correctly as the current path outputs are correct.
+Line 15 is the correct usage of "pwd" command, which takes no arguments and simply print
+current path information. The output is the same as using "pwd" in bash, so it is correct.
+Line 16 and 17 are using "pwd" with more arguments, when doing this in bash, it will simply
+ignore the arguments. The output of myShell is the same as what "pwd" with no argument will do
+and it is the same as that printed by bash.
+For the rest of commands "pwd" is further test with "cd". The printed outputs are the same as
+what bash will produce, and they are correct as expected.
+
+
+(2) Run ./myShell < testcases/builtin_cmd2.txt
+    or ./myShell < testcases/builtin_cmd2.txt > testcases/output.txt 2> testcases/error.txt
+
+In these tests, commands "set", "export" and "$" evaluation of variable as well as access to
+variable will be tested. Line 1 of builtin_cmd2.txt is a wrong usage of "set" as there should
+be two operands for "set" command. In this design, error message will be printed, which is
+correct.
+Line 2 is a normal usage of "set" which set variable a to value b. "echo" is used to test if
+the value has been set properly. Note that "$" will simply replace the variable name "b" to
+its value "b" so what is expected to be printed out is "b". The output is "b" which is as
+expected.
+Line 4 and line 6 are "set" var_name followed by arbitrary white spaces and an empty string.
+In this design, they are treated as valid usages and var_name will be just set to "". By using
+"echo" the value of $a is printed (when "echo" something empty, an empty line will be printed)
+and it is correct as expected.
+In line 8, "$" is not a known variable name so nothing can be printed. In this design an error
+prompt will be printed and "echo" is stopped to continue to print "a".
+Line 9 sets "abc" to "def   ghi". Note that myShell will skip arbitray white spaces between
+var_name ("abc") and var_value ("def   ghi") as this makes more sense. By using echo, it can
+be seen that the output is "def ghi", the reason is that $abc is replace to "def   ghi" where
+there are arbitray white spaces between "def" and "ghi" and they will be ignored when checking
+command arguments (bash will also do this), so the output is correct. The correctness of set
+will also be checked later using "export".
+If the command is "$abc", what is expected is it will be replaced by "def   ghi". The output
+is "Command def not found" which is correct as there are white spaces between "def" and "ghi"
+and "def" is treated as the first command.
+For line 12, "set $abc jkl" will be treated as "set def   ghi jkl". So what is expected is
+that variable "def" is set to "ghi jkl". By using "echo", the ouput is "ghi jkl" which is as
+expected and hence myShell performs the function correctly.
+For line 14, "$" will evaluate the longest valid var_name (which may contain letters, numbers
+and underscores). In this case, "$" is followed by a "%" which is not a valid character in a
+variable name,hence no possible replacement will be performed by "$". In this design,an error
+prompt will be printed when there is invalid "$" evaluation and nothing will be done by set.
+Line 15 contains a illeagal variable name, as expected, an error message is printed.
+The ouput of line 17 is "new value !@#%^&*()" which is as expected as both var_name and its
+value are valid.
+Note that the ouput of line 20 will be an error prompt because "$$a" is not a valid evaluation
+as discussed above.
+The ouput of line 22 is expected to be "l" as line 21 will update the value of variable "s"
+which is previously set to "h". The ouput is "l" as expected.
+Line 23 is equal to "set  ssss   JJJJ$aJJ". Note that since "aJJ" is a valid variable name,
+it will be evaluated. However, "aJJ" is not set previously, so it is treated as an unknown
+variable. The ouput of this line of command is an error message indicating "invalid variable"
+which makes sense as discussed above.
+Line 24 performs a valid "$" evaluation as there is an ":" after "a" (which is a variable
+previously set and has a value of "s"). So the expected ouput by line 25 will be "JJJJs:JJ",
+the actual ouput is just the same as expected.
+Line 26 and 27 are used to further test the "set" and "$" evaluation, the expected performance
+is "ls -a     ../". The ouput is the same as "ls -a ../" which is correct.
+Line 28 is for "export" testing, as we need one operand for "export", this is not a valid usage.
+Hence, as expected, an error message will be printed out in this design indicating "invalid
+variable name".
+Line 29 is a valid usage of "export". However, no variable named "test" is previously set.
+Hence nothing to be done with "export test". From the ouput of "env" there is no new variable
+added, which is as expected.
+Line 31 is an invalid usage with more than one operand for "export". In this design, an error
+prompt will be printed indicating that there are too many arguments.
+Line 32 is a valid "export" usage. What is expected is "export ssss" where "ssss" is a variable
+set previously with value "JJJJs:JJ". After that, the variable "ssss" should be added to the
+list of environment variables. From the ouput of line 32, it can be found that there is a new
+line "ssss=JJJJs:JJ" which indicates a successful "export".
+Line 34 to 36 are further testing for "export", what is expected is variable "ssss" with value
+"new     value!>>>>||||   ||><<<2>2>\ \ \ \" is added to the environment variable list. In the
+ouput of line 36, there is a new line "new     value!>>>>||||   ||><<<2>2>\ \ \ \" which
+indicates myShell works correctly with "export".
+Line 37 and 38 are two invalid "export" usage as the variable name is not leagal and "$"
+evaluation fails respectively. As expected, error messages of "invalid variable name" and
+"unknown variable name" are printed respectively.
+Line 39 and 40 are just tests for "$" evaluation. "test:$a$a$a$a$a$a" is expected to be equal
+to "test:ssssss" as "s" is the value of "a" (set previously). The output is "test:ssssss"
+which is correct and as expected. For line 40, the value of environment variables PATH and
+HOME are found using getenv() and are properly printed. The ouput is correct as it is the same
+as that produced by bash.
+Line 41 to 43 are tests for changing and exporting environment variable HOME. Note that after
+HOME is changed and exported, any operation associated with the value of HOME will change
+since the value of HOME may be different. In this case, "cd ~" is used for testing as it
+change directory to what is indicated by HOME. The ouput of line 43 is an error message
+indicating "No such file or directory" which makes sense as "new~HOME~" is not a valid
+directory.
+Line 44 to 46 are used to test for setting and exporting environment variable PATH. Line 44
+is expected to be equivalent to add ":/home/yl489/ece551/mp_miniproject" to the original PATH
+variable (as ":" is not a valid variable name character, so "$" will replace PATH with its
+value). After exporting, test_export command is used to test if PATH ahs been successfully
+modified. test_export is the name of an executable binary file in the directory
+"/home/yl489/ece551/mp_miniproject", so enter "test_export" is expected to be equivalent to
+"./test_export" as the directory it is in has been added to PATH. "test_export" will simply
+print out "test success!", the ouput of line 46 is the user prompt of myShell plus
+"test success!" which indicates that the program has been successfully executed and hence
+PATH has been successfully set and exported.
+Line 47 to 50 serve similar purpose. However, line 47 set PATH to an invalid directory name.
+After exported, the PATH is overwritten with invalid directory value, so when "env" and "ls"
+are entered, there is no valid directory to search for the full paths of these commands.
+Therefore, what is expected is that these commands are unable to be executed. The ouput of
+line 49 and 50 are "Command env not found" and "Command ls not found" which are both correct
+since they indicate that what should have been found are not found after PATH is modified.
+The final two commands are used to simply test if the variable will be added to environment
+variable list with only setting and no exporting. The output of env indicates nothing is added
+which is as expected.
+
+***************************************************************************************************
+3. For this part, redirection and pipe are tested.
+
+
+(1) Run ./myShell < testcases/redirect_cmd.txt
+    or ./myShell < testcases/redirect_cmd.txt > testcases/output.txt 2> testcases/error.txt
+
+Line 1 to line 11 of redirect_cmd.txt are some syntax tests for "<", ">" and "2>", note that
+in this design, any of ">", "<" and "2>" cannot be followed directly by any of them and they
+are also not allowed to be used alone without other operand. For these commands, proper error
+messages will be printed to indicate the syntax error.
+Line 12 to line 17 are valid usages for redirection, although unknown or empty command are
+used for redirection, the file followed by ">" will still be created (it is empty as expected).
+For input redirection, if file followed by "<" does not exist, an error message will be printed
+indicating "No such file or directory". "2>" will perform just like ">", if it is followed by
+a valid file name (not '|', and syntax for '|' will be checked latter), it will create the file
+although the file is empty.
+Line 20 to line 25 are used to test the effect caused by changing position of ">". In this
+design, position of ">" does not really matter, for line 20 to 25, these commands will all
+perform what "ls -argument -argument..." would do. Also, for line 20, "ls>a" is a valid usage
+as in this design ">", "<" and "2>" will handle with white spaces near them and they will work
+normally even if there is no white space near them.
+For line 26, this command ("ls cat myShell.h>g ls pwd") is expected to print error messages
+which indicate "cat", "ls"(for the second one) and "pwd" are not valid file or directory as
+they are treated as directories or files of the first "ls" command. At the same time, the
+program will perform "ls myShell.h > g". They are actually what bash does with this command.
+The ouput of this line is just the same as bash and a file named "g" is created with content
+of a line saying "myShell.h". This is correct as discussed above.
+Note that in this design redirect is not performed when builtin commands are executed, so for
+line 27, the "pwd" command will simply print current path without performing anything after it.
+Hence no file named "h" will be created.
+For line 28, the first "unknown" will be treated as a command and a file named "i" will be
+created. However, there is no executable command named "unknown" (not found in directories
+specified by PATH) so an error prompt is printed as expected.
+For line 29, no file named "unknown" exists, so the input redirection cannot be performed.
+An error message indicating "No such file or directory" is printed as expected.
+For the rest of the commands, ">", "<" and "2>" are combined and tested. For line 30, Makefile
+is printed into cat_ouput.txt as expected. For line 31, no file named "unknown" exists, so
+"cat" cannot perform normally. A file named cat_error.txt is created and the error message
+"unknown: No such file or directory" is printed as expected. For line 32, ./pipe1 will simply
+read from stdin until EOF is encountered and at the same time print everything read from stdin
+to stdout with a "pipe1: " prefix on every line. The content of pipe1_output.txt is just the same
+as Makefile with a prefix, so it is correct.
+For line 33, the last two "unknown" will be ignore as this is what bash does. The ouput is the
+content of myShell.h with "pipe1: " prefix each line as we use myShell.h as the input redirect
+file. The ouput is as expected.
+The last command is the same as that for the first part of this test file, which is performed
+in bash. Now it is used to test myShell. The command is "< testcases/basic_cmd1.txt ./myShell
+> testcases/output2.txt 2> testcases/error2.txt". After performing this, the contents of
+"output2" and "error2" are the same as the output when this command is entered in bash, so the
+program works correctly with redirect.
+ 
+
+(2) Run ./myShell < testcases/pipe_cmd.txt
+    or ./myShell < testcases/pipe_cmd.txt > testcases/output.txt 2> testcases/error.txt
+
+For the last part of the test, the syntax of '|' is firstly examined. The first three lines are
+illeagal usages of '|' as in this design, the syntax is that '|' cannot be the first one or
+the last character in the command, so when these commands are executed, some error messages
+indicating syntax errors will be printed as expected.
+For line 5, the command is used to test multiple pipe (some more test on multiple pipes will
+be performed later). The command is expected to cat the myShell.h as "cat" takes no input from
+stdin (the ouput of "ls"). The ouput is the content of myShell.h which is as expected.
+For line 6 when there are multiple '|', what will perform in this design is to create pipes
+with nothing to be done (no writes and read from pipe) between "||", so as "a" and "b" are
+not valid commands, error messages will be printed. The ouput is the same as bash.
+For line 7, when there is only one pipe between ./pipe3 and ./pipe1, the output will be
+"test case" as ./pipe3 just prints out all the arguments sent in. However, as discussed above,
+when there is multiple '|', nothing is done for empty pipes, so there is nothing to be printed.
+The ouput is as expected.
+Line 8 to 10 are used to test if pipe can work normally with builtin commands. For line 8, as
+"set" and "export" are not designed to be able to work with pipes, they will be treated as
+non-builtin commands after '|'. So if they are used after '|', error message will be printed
+out indicating "Command not found". For line 9, "pwd" is able to work properly with pipes and
+the ouput is the current path information with a "pipe1: " prefix since pwd takes no input from
+stdin. In this design, if "pwd" is the first input, nothing will be execute after "pwd" printed
+out current path information (in this case "ls" will not execute). The ouput is just the current
+path as expected.
+Line 12 and 13 are used are a synthesized test case for executing different program with
+arguments passing, redirect and pipes. What is expected is that message "I want myShell to be
+robust" to be passed along the pipes with some prefixes added. The ouput is "pipe2: pipe2: pipe1:
+I want myShell to be robust" which is as expected. Note that the longer pipe version also works
+correctly as expected.
+The last two tests are for testing is myShell's pipe can handle large files without deadlock.
+The input file largefile.txt is a file with size of 1149999 bytes which is large enough for
+testing. The expected ouput is that largefile_new.txt has all the contents of largefile.txt and
+with proper prefixes on each line. The output of largefile_new.txt is exactly as expected, so
+the pipe can work with largefile without deadlocks. The longer pipe version also works correctly.
+
+
+
+
+This is the end of the testing file, hope it may find you some help :).
+
+
+
+
+
+

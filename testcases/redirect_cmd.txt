@@ -1,0 +1,34 @@
+>
+<
+2>
+>>
+<<
+2>>
+<>
+><2>
+>>a
+a<<
+2>>a
+unknown2>a
+unknown 2>a
+unknown<a
+>a
+rm a
+<a
+2>a
+rm a
+ls>a
+ls > b
+ls  -a  >     c
+ls   >    d   -a
+> e ls -a
+ls -a >f -t
+ls cat myShell.h>g ls pwd
+pwd > h
+unknown unknown > i
+unknown < k
+cat Makefile > cat_ouput.txt
+2> cat_error.txt cat unknown
+> pipe1_output.txt < Makefile ./pipe1
+./pipe1 > pipe1_output.txt < myShell.h ./pipe1 unknown unknown
+< testcases/basic_cmd1.txt ./myShell > testcases/output.txt 2> testcases/error.txt

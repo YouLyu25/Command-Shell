@@ -1,0 +1,23 @@
+cd ./
+cd ../
+cd mp_miniproject
+cd ../ ../
+cd ../ ls  -a
+  cd unknown unknown
+  cd   ece551/mp_miniproject
+cd ~
+echo $HOME
+cd ece551/mp_miniproject
+  cd      
+cd ece551/mp_miniproject
+ cd
+cd ece551/mp_miniproject
+ pwd
+  pwd ls   -a
+pwd unknown unknown unknown unknown
+ cd ../
+ pwd
+   cd /bin/
+  pwd
+    cd /bin/usr/
+ pwd

@@ -1,0 +1,17 @@
+       
+      ls   -a     -l
+ls                 ../
+unknown         unknown
+\n
+,.;'342#@1#
+~~~~~~~~~~
+ÿÿÿÿÿÿÿÿÿÿÿ
+   ls -a    -l     -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a -a
+unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown unknown
+./myShell
+echo test_echo!
+exit
+./fault_test1
+exit
+ls
+ls -a

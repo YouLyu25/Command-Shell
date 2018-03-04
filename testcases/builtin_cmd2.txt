@@ -1,0 +1,52 @@
+set
+set a b
+   echo $a
+ set a
+  echo    $a
+set a      
+echo $a
+  echo   $    a
+set abc    def   ghi
+echo $abc
+   $abc
+set $abc  jkl
+ echo $def
+set abc new value!@#$%^&*()
+set a**bc ****
+set a_b_3c new value !@#%^&*()
+echo  $a_b_3c
+set a s
+ set  s   h
+echo $$a
+set $a    l
+  echo $s
+     set  ss$a$a   JJJJ$aJJ
+    set ss$a$a       JJJJ$a:JJ
+  echo $ssss
+set param    a     ../
+    ls   -$param
+export
+export test
+env
+      export ss$a$a we are
+   export ss$a$a
+env
+set ss$a$a new     value!>>>>||||   ||><<<2>2>\ \ \ \
+export ss$a$a
+env
+   export var_name*
+export     $$$
+echo test:$a$a$a$a$a$a
+echo $PATH $HOME
+set HOME new~HOME~
+export HOME
+cd ~
+set   PATH   $PATH:/home/yl489/ece551/mp_miniproject
+export PATH
+test_export
+set PATH   unknown$ssss      unknown
+export PATH
+env
+ls -a
+set log log1
+env

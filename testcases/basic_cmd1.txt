@@ -1,0 +1,31 @@
+ls
+ls /unknown
+ls -a
+ls /
+ls -a ./
+ls -a -l -t
+ls -a -l -t unknown
+mkdir
+mkdir test_dir
+mkdir test_dir unknown
+rmdir
+rmdir test_dir unknown
+ss
+ss unknown
+which valgrind
+stat myShell
+stat unknown
+cat unknown
+cat myShell.h
+cat myShell.h myShell.h
+cat myShell.h unknown
+find myShell
+find myShell unknown
+mmmmmmmmm
+
+unknown
+./sss
+/bin/
+cat
+chmod
+echo unknown

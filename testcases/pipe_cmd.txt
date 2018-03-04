@@ -1,0 +1,15 @@
+|
+||
+|ls
+
+ls|ls|ls|ls|ls|ls|cat myShell.h
+a|||b
+./pipe3 test case|||./pipe1
+ls -a | ls | set a b
+ls | ./pipe1|pwd| ./pipe1
+pwd | ls
+cat x 2> s|./pipe1<s|./pipe2>t
+./pipe3 I want myShell to be robust|./pipe1|./pipe2|./pipe2 > y
+./pipe3 I want myShell to be robust|./pipe1|./pipe2|./pipe2|./pipe1|./pipe2 > y
+cat < largefile.txt |./pipe1|./pipe2|./pipe2> largefile_new.txt
+cat < largefile.txt |./pipe1|./pipe2|./pipe2|./pipe1|./pipe2> largefile_new.txt

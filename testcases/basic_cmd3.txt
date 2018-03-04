@@ -1,0 +1,3 @@
+echo a\ b\      c\ d\ \ \ \ \ \ e
+ls a\ b c\ d
+mkdir test\ \ \ dir\ 1
